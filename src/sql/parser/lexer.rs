@@ -136,6 +136,11 @@ impl Keyword {
     }
 }
 
+impl Display for Keyword {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.to_str())
+    }
+}
 // lexer 词法解析的实现
 pub struct Lexer<'a> {
     iter: Peekable<Chars<'a>>,
