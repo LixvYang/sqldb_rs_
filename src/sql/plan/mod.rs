@@ -1,6 +1,10 @@
 use planner::Planner;
 
+use crate::error::Result;
+
 use super::{
+    engine::Transaction,
+    exexutor::{Executor, ResultSet},
     parser::ast::{self, Expression},
     schema::Table,
 };
@@ -34,6 +38,9 @@ pub struct Plan(pub Node);
 impl Plan {
     pub fn build(stmt: ast::Statement) -> Self {
         Planner::new().build(stmt)
+    }
+    pub fn executor<T: Transaction>(self, txn: &mut T) -> Result<ResultSet> {
+        <dyn Executor<T>>::build(self.0).executor(txn)
     }
 }
 
