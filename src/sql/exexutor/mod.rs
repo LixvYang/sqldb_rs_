@@ -11,7 +11,7 @@ mod query;
 mod schema;
 
 pub trait Executor<T: Transaction> {
-    fn executor(&self, txn: &mut T) -> Result<ResultSet>;
+    fn executor(self: Box<Self>, txn: &mut T) -> Result<ResultSet>;
 }
 
 impl<T: Transaction> dyn Executor<T> {
@@ -31,5 +31,5 @@ impl<T: Transaction> dyn Executor<T> {
 pub enum ResultSet {
     CreateTable { table_name: String },
     Insert { count: usize },
-    Scan { columns: Vec<String>, row: Vec<Row> },
+    Scan { columns: Vec<String>, rows: Vec<Row> },
 }

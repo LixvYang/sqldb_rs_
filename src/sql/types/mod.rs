@@ -1,8 +1,10 @@
 // use serde::{Deserialize, Serialize};
 
+use serde::{Deserialize, Serialize};
+
 use super::parser::ast::{Consts, Expression};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 
 pub enum DataType {
     Boolean,
@@ -11,7 +13,7 @@ pub enum DataType {
     String,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Null,
     Boolean(bool),

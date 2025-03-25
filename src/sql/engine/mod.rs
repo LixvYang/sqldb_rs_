@@ -1,4 +1,4 @@
-use crate::error::Result;
+use crate::error::{Error, Result};
 
 use super::{exexutor::ResultSet, parser::Parser, plan::Plan, schema::Table, types::Row};
 
@@ -29,9 +29,14 @@ pub trait Transaction {
 
     fn scan_table(&mut self, table_name: String) -> Result<Vec<Row>>;
 
-    fn create_table(&mut self, table_name: String) -> Result<()>;
+    fn create_table(&mut self, table_name: Table) -> Result<()>;
 
     fn get_table(&mut self, table_name: String) -> Result<Option<Table>>;
+
+    fn must_get_table(&mut self, table_name: String) -> Result<Table> {
+        self.get_table(table_name.clone())?
+            .ok_or(Error::Internal(format!("table {} not found.", table_name)))
+    }
 }
 
 pub struct Session<E: Engine> {
@@ -39,7 +44,7 @@ pub struct Session<E: Engine> {
 }
 
 impl<E: Engine> Session<E> {
-    pub fn exexutor(&mut self, sql: &str) -> Result<ResultSet> {
+    pub fn execute(&mut self, sql: &str) -> Result<ResultSet> {
         match Parser::new(sql).parse()? {
             stmt => {
                 let mut txn = self.engine.begin()?;

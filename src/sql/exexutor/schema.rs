@@ -11,12 +11,14 @@ pub struct CreateTable {
 
 impl CreateTable {
     pub fn new(schema: Table) -> Box<CreateTable> {
-        Box::new(CreateTable { schema: schema })
+        Box::new(CreateTable { schema })
     }
 }
 
 impl<T: Transaction> Executor<T> for CreateTable {
-    fn executor(&self, txn: &mut T) -> Result<ResultSet> {
-        todo!()
+    fn executor(self: Box<Self>, txn: &mut T) -> Result<ResultSet> {
+        let table_name = self.schema.name.clone();
+        txn.create_table(self.schema)?;
+        Ok(ResultSet::CreateTable { table_name })
     }
 }
